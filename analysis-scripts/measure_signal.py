@@ -38,6 +38,7 @@ def get_sample(freq):
 
     while hackrf_open != True:
         try:
+            now = datetime.datetime.now().replace(microsecond=0).isoformat() 
             lte_output = subprocess.run(
                 ['CellSearch', '--freq-start', freq, '-n', '5'], check=True, capture_output=True, text=True)
             hackrf_open = lte_output.returncode == 0
@@ -57,8 +58,6 @@ def get_sample(freq):
         output_rows = lte_output.stdout.splitlines()[output_index+1:]
         output_rows = list(map(lambda str: list(
             filter(None, str.split(' '))), output_rows))
-
-    now = datetime.datetime.now().replace(microsecond=0).isoformat() 
 
     # there are not correct spaces when the antenna ID is 3 digits or longer, so we fix that here
     for row in output_rows:
