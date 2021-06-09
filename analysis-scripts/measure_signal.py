@@ -49,12 +49,14 @@ def get_sample(freq):
             print('Could not open HackRF, trying again')
 
 
+    output_index = None
+
     for index, line in enumerate(lte_output.stdout.splitlines()):
         if "DPX CID" in line:
             output_index = index
    
     # this checks to make sure that we did find output lines, if we didn't thne output_index if falsey
-    if output_index:
+    if output_index != None:
         output_rows = lte_output.stdout.splitlines()[output_index+1:]
         output_rows = list(map(lambda str: list(
             filter(None, str.split(' '))), output_rows))
