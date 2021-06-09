@@ -41,13 +41,24 @@ def get_sample(freq):
         if "DPX CID" in line:
             output_index = index
    
-    output_rows = lte_output.stdout.splitlines()[output_index+1:]
-    output_rows = list(map(lambda str: list(
-        filter(None, str.split(' '))), output_rows))
+    # this checks to make sure that we did find output lines, if we didn't thne output_index if falsey
+    if output_index:
+        output_rows = lte_output.stdout.splitlines()[output_index+1:]
+        output_rows = list(map(lambda str: list(
+            filter(None, str.split(' '))), output_rows))
+
+      
 
     now = datetime.datetime.now().replace(microsecond=0).isoformat() 
 
+    # there are not correct spaces when the antenna ID is 3 digits or longer, so we fix that here
     for row in output_rows:
+        if len(row[1]) > 3:
+            length = len(row[1])
+            cid = row[1][:length]
+            antenna = row[1][:-3]
+            row[1] = cid
+            row.insert(1, antenna)
         row.append(now)
     
     return output_rows
