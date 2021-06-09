@@ -19,17 +19,18 @@ def main():
         print(now)
 
 def initial_write(file_name):
-    with open(file_name,'w', newline='\n') as csvfile:
-        lte_writer = csv.writer(csvfile)
-        columns = ['DPX', 'CID', 'A', 'fc', 'freq-offset', 'RXPWR', 'C', 'nRB', 'P', 'PR', 'CrystalCorrectionFactor', 'time']
-        lte_writer.writerow(columns)
+    csvfile = open(file_name,'w', newline='\n')
+    lte_writer = csv.writer(csvfile)
+    columns = ['DPX', 'CID', 'A', 'fc', 'freq-offset', 'RXPWR', 'C', 'nRB', 'P', 'PR', 'CrystalCorrectionFactor', 'time']
+    lte_writer.writerow(columns)
+    csvfile.close()
 
 
 def write_samples(file_name, samples):
-    with open(file_name,'a', newline='\n') as csvfile:
-        lte_writer = csv.writer(csvfile)
-        for row in samples:
-            lte_writer.writerow(row)
+    csvfile = open(file_name,'a', newline='\n')
+    lte_writer = csv.writer(csvfile)
+    for row in samples:
+        lte_writer.writerow(row)
 
 
 def get_sample(freq):
@@ -68,7 +69,7 @@ def get_sample(freq):
             row[1] = cid
             print(f'cid: {cid}, ant:{antenna}')
             row.insert(2, antenna)
-            
+
         row.append(now)
     
     return output_rows
