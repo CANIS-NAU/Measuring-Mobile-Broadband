@@ -4,22 +4,32 @@ import datetime
 
 
 def main():
-    now = datetime.datetime.now().replace(microsecond=0).isoformat() 
+    init_time = datetime.datetime.now().replace(microsecond=0).isoformat() 
 
-    with open(f'./data/LTE_logs/LTE_Log_{now}','w', newline='\n') as csvfile:
+    file_name = f'./data/LTE_logs/LTE_Log_{init_time}'
+
+    # we do these writes with multiple file operations so that they are resilient to power outages
+    # as if we do everything in one file operation the data can be more easily lost
+    initial_write(file_name)
+    
+    while True:
+        samples = get_sample('1.9925e9')
+        write_samples(file_name, samples)
+        now = datetime.datetime.now().replace(microsecond=0).isoformat() 
+        print(now)
+
+def initial_write(file_name):
+    with open(file_name,'w', newline='\n') as csvfile:
         lte_writer = csv.writer(csvfile)
-
         columns = ['DPX', 'CID', 'A', 'fc', 'freq-offset', 'RXPWR', 'C', 'nRB', 'P', 'PR', 'CrystalCorrectionFactor', 'time']
-
         lte_writer.writerow(columns)
 
-        while True:
-            samples = get_sample('1.9925e9')
-            for row in samples:
-                lte_writer.writerow(row)
-        
-            now = datetime.datetime.now().replace(microsecond=0).isoformat() 
-            print(now)
+
+def write_samples(file_name, samples):
+    with open(file_name,'a', newline='\n') as csvfile:
+        lte_writer = csv.writer(csvfile)
+        for row in samples:
+            lte_writer.writerow(row)
 
 
 def get_sample(freq):
@@ -47,8 +57,6 @@ def get_sample(freq):
         output_rows = list(map(lambda str: list(
             filter(None, str.split(' '))), output_rows))
 
-      
-
     now = datetime.datetime.now().replace(microsecond=0).isoformat() 
 
     # there are not correct spaces when the antenna ID is 3 digits or longer, so we fix that here
@@ -60,6 +68,7 @@ def get_sample(freq):
             row[1] = cid
             print(f'cid: {cid}, ant:{antenna}')
             row.insert(2, antenna)
+            
         row.append(now)
     
     return output_rows
