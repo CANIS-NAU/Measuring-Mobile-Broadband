@@ -58,7 +58,8 @@ def get_sample(freq):
             antenna = row[1][length-3:]
             cid = row[1][:-3]
             row[1] = cid
-            row.insert(1, antenna)
+            print(f'cid: {cid}, ant:{antenna}')
+            row.insert(2, antenna)
         row.append(now)
     
     return output_rows
