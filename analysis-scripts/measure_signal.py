@@ -55,8 +55,8 @@ def get_sample(freq):
     for row in output_rows:
         if len(row[1]) > 3:
             length = len(row[1])
-            cid = row[1][:length]
-            antenna = row[1][-3:]
+            cid = row[1][:length-3]
+            antenna = row[1][:-3]
             row[1] = cid
             row.insert(1, antenna)
         row.append(now)
